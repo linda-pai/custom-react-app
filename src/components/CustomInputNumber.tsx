@@ -1,5 +1,9 @@
 import React, { useEffect } from "react";
-import { InputNumberWrapper, ControlButton, InputNumber } from "./styles";
+import {
+  InputNumberWrapper,
+  ControlButton,
+  InputNumber,
+} from "../styles/styles";
 import useLongPress from "../hooks/useLongPress";
 import { ICustomInputNumber } from "../types/interfaces";
 
@@ -19,38 +23,31 @@ const CustomInputNumber = ({
     onChange(name, currentValue);
   }, [currentValue]);
 
-  const onPressMinus = () => {
-    if (currentValue === min) return;
-    setCurrentValue((prev) => checkIsInRange(prev - step));
-  };
-
-  const onPressPlus = () => {
-    if (currentValue === max) return;
-    setCurrentValue((prev) => checkIsInRange(prev + step));
-  };
-
-  const longPressMinus = useLongPress(onPressMinus);
-
-  const longPressPlus = useLongPress(onPressPlus);
-
   const checkIsInRange = (value: number) => {
-    if (value < min) {
-      return min;
-    } else if (value > max) {
-      return max;
-    } else {
-      return value;
-    }
+    if (value < min) return min;
+    if (value > max) return max;
+    return value;
   };
+
+  const onPressMinus = () =>
+    setCurrentValue((prev) => checkIsInRange(prev - step));
+  const onPressPlus = () =>
+    setCurrentValue((prev) => checkIsInRange(prev + step));
+
+  const onClickMinus = () => setCurrentValue((prev) => prev - step);
+  const onClickPlus = () => setCurrentValue((prev) => prev + step);
+
+  const longPressMinus = useLongPress(onPressMinus, onClickMinus);
+  const longPressPlus = useLongPress(onPressPlus, onClickPlus);
 
   const handleOnChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
-    setCurrentValue(checkIsInRange(parseInt(value)));
+    setCurrentValue(parseInt(value));
   };
 
   const handleOnBlur = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
-    if (value !== "") onBlur(name, checkIsInRange(parseInt(value)));
+    if (value !== "") onBlur(name, parseInt(value));
   };
 
   return (
@@ -58,7 +55,7 @@ const CustomInputNumber = ({
       <ControlButton
         type="button"
         value="-"
-        disabled={value === min || disabled.minus}
+        disabled={disabled.minus || currentValue === min}
         {...longPressMinus}
       />
       <InputNumber
@@ -75,7 +72,7 @@ const CustomInputNumber = ({
       <ControlButton
         type="button"
         value="+"
-        disabled={value === max || disabled.plus}
+        disabled={disabled.plus}
         {...longPressPlus}
       />
     </InputNumberWrapper>

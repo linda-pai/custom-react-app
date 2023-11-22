@@ -7,35 +7,53 @@ import {
   LabelInputWrapper,
   Label,
   Description,
-} from "./styles";
+} from "../styles/styles";
 import { IRoomAllocation } from "../types/interfaces";
+import { useSelector, useDispatch } from "react-redux";
+import { RootState } from "../store";
+import {
+  setRoomAllocation,
+  setRoomAvailable,
+} from "../store/roomAllocationSlice";
 
 const RoomAllocation = ({ guest, room, onChange }: IRoomAllocation) => {
-  const [roomAllData, setRoomAllData] = useState([]);
+  const roomAllocation = useSelector(
+    (state: RootState) => state.roomAllocationSlice.roomAllocation
+  );
+
+  const roomAvailable = useSelector(
+    (state: RootState) => state.roomAllocationSlice.roomAvailable
+  );
+
+  const maxChild = roomAvailable;
+  const maxAdult = roomAvailable;
+
   const [disabled, setDisabled] = useState({
     minus: false,
     plus: false,
   });
-  const [maxAdult, setMaxAdult] = useState<number>(guest);
+
+  const dispatch = useDispatch();
 
   useEffect(() => {
-    setMaxAdult(guest);
-  }, [guest]);
-
-  const totalGuest = roomAllData.reduce(
-    (acc, cur) => acc + cur.adult + cur.child,
-    0
-  );
-
-  const notAllocatedGuest = guest - totalGuest || 0;
-
-  const maxChild = guest;
-
-  useEffect(() => {
-    setRoomAllData(
-      Array.from({ length: room }, () => ({ adult: 1, child: 0 }))
-    );
+    const newRoomAllData = Array.from({ length: room }, () => ({
+      adult: 1,
+      child: 0,
+    }));
+    dispatch(setRoomAllocation(newRoomAllData));
   }, [room]);
+
+  useEffect(() => {
+    onChange(roomAllocation);
+  }, [roomAllocation]);
+
+  useEffect(() => {
+    const totalGuest = roomAllocation.reduce(
+      (acc, cur) => acc + cur.adult + cur.child,
+      0
+    );
+    dispatch(setRoomAvailable(guest - totalGuest));
+  }, [guest, roomAllocation]);
 
   useEffect(() => {
     if (guest === room) {
@@ -48,7 +66,7 @@ const RoomAllocation = ({ guest, room, onChange }: IRoomAllocation) => {
   }, [guest, room]);
 
   useEffect(() => {
-    if (notAllocatedGuest === 0) {
+    if (roomAvailable === 0) {
       setDisabled({
         ...disabled,
         plus: true,
@@ -61,26 +79,25 @@ const RoomAllocation = ({ guest, room, onChange }: IRoomAllocation) => {
         minus: false,
       });
     }
-  }, [notAllocatedGuest]);
+  }, [roomAvailable]);
 
-  const handleOnChange = (key: number, name: string, value: number) => {
-    const newRoomAllData = [...roomAllData];
+  const getNewRoomAllocation = (key: number, name: string, value: number) => {
+    const newRoomAllData = [...roomAllocation];
     newRoomAllData[key] = {
       ...newRoomAllData[key],
       [name]: value,
     };
-    setRoomAllData(newRoomAllData);
-    onChange(newRoomAllData);
+    return newRoomAllData;
+  };
+
+  const handleOnChange = (key: number, name: string, value: number) => {
+    const newRoomAllData = getNewRoomAllocation(key, name, value);
+    dispatch(setRoomAllocation(newRoomAllData));
   };
 
   const handleOnBlur = (key: number, name: string, value: number) => {
-    const newRoomAllData = [...roomAllData];
-    newRoomAllData[key] = {
-      ...newRoomAllData[key],
-      [name]: value,
-    };
-    setRoomAllData(newRoomAllData);
-    onChange(newRoomAllData);
+    const newRoomAllData = getNewRoomAllocation(key, name, value);
+    dispatch(setRoomAllocation(newRoomAllData));
   };
 
   return (
@@ -88,8 +105,8 @@ const RoomAllocation = ({ guest, room, onChange }: IRoomAllocation) => {
       <div>
         住客人數：{guest} 人 / {room} 房
       </div>
-      <InfoSection>尚未分配人數：{notAllocatedGuest}人</InfoSection>
-      {roomAllData.map((guest, index) => (
+      <InfoSection>尚未分配人數：{roomAvailable}人</InfoSection>
+      {roomAllocation.map((guest, index) => (
         <AllocationItem key={index}>
           <div>
             <div>
@@ -106,7 +123,7 @@ const RoomAllocation = ({ guest, room, onChange }: IRoomAllocation) => {
               </div>
               <CustomInputNumber
                 min={1}
-                max={maxAdult}
+                max={maxAdult + guest.adult}
                 step={1}
                 name="adult"
                 value={guest.adult}

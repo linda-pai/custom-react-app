@@ -1,6 +1,9 @@
 import { useCallback, useRef, useState } from "react";
 
-const useLongPress = (func: (event: any) => void) => {
+const useLongPress = (
+  pressFunc: (event: any) => void,
+  clickFunc: (event: any) => void
+) => {
   const shouldPreventDefault = true,
     delay = 100;
 
@@ -17,24 +20,24 @@ const useLongPress = (func: (event: any) => void) => {
         target.current = event.target;
       }
       timeout.current = setInterval(() => {
-        func(event);
+        pressFunc(event);
         setLongPressTriggered(true);
       }, delay);
     },
-    [func, delay, shouldPreventDefault]
+    [pressFunc, delay, shouldPreventDefault]
   );
 
   const clear = useCallback(
     (event: any, shouldTriggerClick = true) => {
       timeout.current && clearTimeout(timeout.current);
-      shouldTriggerClick && !longPressTriggered && func(event); // Pass the event argument to onClick
+      shouldTriggerClick && !longPressTriggered && clickFunc(event); // Pass the event argument to onClick
       setLongPressTriggered(false);
       if (shouldPreventDefault && target.current) {
         const targetElement = target.current as HTMLElement; // Add type annotation
         targetElement.removeEventListener("touchend", preventDefault);
       }
     },
-    [shouldPreventDefault, func, longPressTriggered]
+    [shouldPreventDefault, clickFunc, longPressTriggered]
   );
 
   return {
@@ -43,7 +46,6 @@ const useLongPress = (func: (event: any) => void) => {
     onMouseUp: (e: any) => clear(e),
     onMouseLeave: (e: any) => clear(e, false),
     onTouchEnd: (e: any) => clear(e),
-    onClear: (e: any) => clear(e),
   };
 };
 

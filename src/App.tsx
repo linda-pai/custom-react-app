@@ -1,8 +1,9 @@
 import { useEffect, useState } from "react";
-import RoomAllocation from "./RoomAllocation";
-import { RoomAllocationWrapper } from "./styles";
+import RoomAllocation from "./components/RoomAllocation";
+import { RoomAllocationWrapper } from "./styles/styles";
+import { IRoomAllocationItem } from "./types/interfaces";
 
-const ReservePage = () => {
+const App = () => {
   const [guest, setGuest] = useState<number>(5);
   const [room, setRoom] = useState<number>(3);
   const maxGuestPerRoom = 4;
@@ -53,11 +54,13 @@ const ReservePage = () => {
         <RoomAllocation
           guest={guest}
           room={room}
-          onChange={(result) => console.log("result", result)}
+          onChange={(result: IRoomAllocationItem[]) =>
+            console.log("result", result)
+          }
         />
       </RoomAllocationWrapper>
     </div>
   );
 };
 
-export default ReservePage;
+export default App;
