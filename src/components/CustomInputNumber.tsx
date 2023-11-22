@@ -6,6 +6,7 @@ import {
 } from "../styles/styles";
 import useLongPress from "../hooks/useLongPress";
 import { ICustomInputNumber } from "../types/interfaces";
+import { checkIsInRange } from "../utils/checkIsInRange";
 
 const CustomInputNumber = ({
   min,
@@ -23,44 +24,39 @@ const CustomInputNumber = ({
     onChange({
       target: {
         name,
-        value: currentValue,
+        value: checkIsInRange(min, max, currentValue),
       },
     } as any);
 
     onBlur({
       target: {
         name,
-        value: currentValue,
+        value: checkIsInRange(min, max, currentValue),
       },
     } as any);
   }, [currentValue]);
 
-  const checkIsInRange = (value: number) => {
-    if (value < min) return min;
-    if (value > max) return max;
-    return value;
+  const handleOnChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    setCurrentValue(checkIsInRange(min, max, parseInt(value)));
+  };
+
+  const handleOnBlur = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    if (value !== "")
+      setCurrentValue(checkIsInRange(min, max, parseInt(value)));
   };
 
   const onPressMinus = () =>
-    setCurrentValue((prev) => checkIsInRange(prev - step));
+    setCurrentValue((prev) => checkIsInRange(min, max, prev - step));
   const onPressPlus = () =>
-    setCurrentValue((prev) => checkIsInRange(prev + step));
+    setCurrentValue((prev) => checkIsInRange(min, max, prev + step));
 
   const onClickMinus = () => setCurrentValue((prev) => prev - step);
   const onClickPlus = () => setCurrentValue((prev) => prev + step);
 
   const longPressMinus = useLongPress(onPressMinus, onClickMinus);
   const longPressPlus = useLongPress(onPressPlus, onClickPlus);
-
-  const handleOnChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value;
-    if (value !== "") setCurrentValue(parseInt(value));
-  };
-
-  const handleOnBlur = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value;
-    if (value !== "") setCurrentValue(parseInt(value));
-  };
 
   return (
     <InputNumberWrapper>

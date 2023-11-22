@@ -21,9 +21,10 @@ const RoomAllocation = ({ guest, room, onChange }: IRoomAllocation) => {
     (state: RootState) => state.roomAllocationSlice.roomAllocation
   );
 
-  const roomAvailable = useSelector(
-    (state: RootState) => state.roomAllocationSlice.roomAvailable
-  );
+  const roomAvailable = useSelector((state: RootState) => {
+    const num = state.roomAllocationSlice.roomAvailable;
+    return isNaN(num) ? 0 : num;
+  });
 
   const maxChild = roomAvailable;
   const maxAdult = roomAvailable;
@@ -109,20 +110,20 @@ const RoomAllocation = ({ guest, room, onChange }: IRoomAllocation) => {
 
   return (
     <AllocationWrapper>
-      <div>
+      <b>
         住客人數：{guest} 人 / {room} 房
-      </div>
+      </b>
       <InfoSection>尚未分配人數：{roomAvailable}人</InfoSection>
       {roomAllocation.map((guest, index) => (
         <AllocationItem key={index}>
           <div>
-            <div>
+            <b>
               房間：
               {Boolean(guest.adult + guest.child)
                 ? guest.adult + guest.child
                 : 0}
               人
-            </div>
+            </b>
             <LabelInputWrapper>
               <div>
                 <Label>大人</Label>
