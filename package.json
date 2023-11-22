@@ -9,9 +9,9 @@
     "not op_mini all"
   ],
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "webpack serve --mode=development",
-    "build": "webpack --mode=development"
+    "build": "webpack --mode=development",
+    "test": "jest --coverage"
   },
   "author": "lindapai",
   "license": "ISC",
