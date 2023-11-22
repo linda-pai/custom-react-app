@@ -20,7 +20,19 @@ const CustomInputNumber = ({
   const [currentValue, setCurrentValue] = React.useState<number>(value);
 
   useEffect(() => {
-    onChange(name, currentValue);
+    onChange({
+      target: {
+        name,
+        value: currentValue,
+      },
+    } as any);
+
+    onBlur({
+      target: {
+        name,
+        value: currentValue,
+      },
+    } as any);
   }, [currentValue]);
 
   const checkIsInRange = (value: number) => {
@@ -42,12 +54,12 @@ const CustomInputNumber = ({
 
   const handleOnChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
-    setCurrentValue(parseInt(value));
+    if (value !== "") setCurrentValue(parseInt(value));
   };
 
   const handleOnBlur = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
-    if (value !== "") onBlur(name, parseInt(value));
+    if (value !== "") setCurrentValue(parseInt(value));
   };
 
   return (

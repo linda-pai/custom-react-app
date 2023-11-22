@@ -56,13 +56,12 @@ const RoomAllocation = ({ guest, room, onChange }: IRoomAllocation) => {
   }, [guest, roomAllocation]);
 
   useEffect(() => {
-    if (guest === room) {
+    if (guest === room)
       setDisabled({
         ...disabled,
         plus: true,
         minus: true,
       });
-    }
   }, [guest, room]);
 
   useEffect(() => {
@@ -70,18 +69,20 @@ const RoomAllocation = ({ guest, room, onChange }: IRoomAllocation) => {
       setDisabled({
         ...disabled,
         plus: true,
-        minus: false,
       });
     } else {
       setDisabled({
         ...disabled,
         plus: false,
-        minus: false,
       });
     }
   }, [roomAvailable]);
 
-  const getNewRoomAllocation = (key: number, name: string, value: number) => {
+  const getNewRoomAllocation = (
+    event: React.ChangeEvent<HTMLInputElement>,
+    key: number
+  ) => {
+    const { name, value } = event.target;
     const newRoomAllData = [...roomAllocation];
     newRoomAllData[key] = {
       ...newRoomAllData[key],
@@ -90,13 +91,19 @@ const RoomAllocation = ({ guest, room, onChange }: IRoomAllocation) => {
     return newRoomAllData;
   };
 
-  const handleOnChange = (key: number, name: string, value: number) => {
-    const newRoomAllData = getNewRoomAllocation(key, name, value);
+  const handleOnChange = (
+    event: React.ChangeEvent<HTMLInputElement>,
+    index: number
+  ) => {
+    const newRoomAllData = getNewRoomAllocation(event, index);
     dispatch(setRoomAllocation(newRoomAllData));
   };
 
-  const handleOnBlur = (key: number, name: string, value: number) => {
-    const newRoomAllData = getNewRoomAllocation(key, name, value);
+  const handleOnBlur = (
+    event: React.ChangeEvent<HTMLInputElement>,
+    index: number
+  ) => {
+    const newRoomAllData = getNewRoomAllocation(event, index);
     dispatch(setRoomAllocation(newRoomAllData));
   };
 
@@ -127,8 +134,12 @@ const RoomAllocation = ({ guest, room, onChange }: IRoomAllocation) => {
                 step={1}
                 name="adult"
                 value={guest.adult}
-                onChange={(name, value) => handleOnChange(index, name, value)}
-                onBlur={(name, value) => handleOnBlur(index, name, value)}
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                  handleOnChange(e, index)
+                }
+                onBlur={(e: React.FocusEvent<HTMLInputElement>) =>
+                  handleOnBlur(e, index)
+                }
                 disabled={disabled}
               />
             </LabelInputWrapper>
@@ -140,8 +151,12 @@ const RoomAllocation = ({ guest, room, onChange }: IRoomAllocation) => {
                 step={1}
                 name="child"
                 value={guest.child}
-                onChange={(name, value) => handleOnChange(index, name, value)}
-                onBlur={(name, value) => handleOnBlur(index, name, value)}
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                  handleOnChange(e, index)
+                }
+                onBlur={(e: React.FocusEvent<HTMLInputElement>) =>
+                  handleOnBlur(e, index)
+                }
                 disabled={disabled}
               />
             </LabelInputWrapper>

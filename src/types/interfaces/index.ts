@@ -16,6 +16,6 @@ export interface ICustomInputNumber {
   name: string;
   value: number;
   disabled: { plus: boolean; minus: boolean };
-  onChange: (name: string, value: number) => void;
-  onBlur: (name: string, value: number) => void;
+  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  onBlur: (e: React.FocusEvent<HTMLInputElement>) => void;
 }
