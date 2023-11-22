@@ -1,7 +1,12 @@
+export interface IRoomAllocationItem {
+  adult: number;
+  child: number;
+}
+
 export interface IRoomAllocation {
   guest: number;
   room: number;
-  onChange: (result: IRoomAllocation[]) => void;
+  onChange: (result: IRoomAllocationItem[]) => void;
 }
 
 export interface ICustomInputNumber {
