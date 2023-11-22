@@ -17,7 +17,6 @@ const roomAllocationSlice = createSlice({
         roomAllocation: action.payload,
       };
     },
-
     setRoomAvailable: (state, action: PayloadAction<number>) => {
       return {
         ...state,

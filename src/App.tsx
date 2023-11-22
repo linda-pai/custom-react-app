@@ -38,7 +38,6 @@ const App = () => {
         />
         <label htmlFor="guest">guest</label>
       </div>
-
       <div>
         <input
           type="range"

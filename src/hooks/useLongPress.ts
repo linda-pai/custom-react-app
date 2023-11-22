@@ -1,8 +1,8 @@
 import { useCallback, useRef, useState } from "react";
 
 const useLongPress = (
-  pressFunc: (event: any) => void,
-  clickFunc: (event: any) => void
+  pressFunc: (event: React.TouchEvent | React.MouseEvent) => void,
+  clickFunc: (event: React.TouchEvent | React.MouseEvent) => void
 ) => {
   const shouldPreventDefault = true,
     delay = 100;
@@ -41,15 +41,15 @@ const useLongPress = (
   );
 
   return {
-    onMouseDown: (e: any) => start(e),
-    onTouchStart: (e: any) => start(e),
-    onMouseUp: (e: any) => clear(e),
-    onMouseLeave: (e: any) => clear(e, false),
-    onTouchEnd: (e: any) => clear(e),
+    onMouseDown: (e: React.MouseEvent) => start(e),
+    onMouseUp: (e: React.MouseEvent) => clear(e),
+    onMouseLeave: (e: React.MouseEvent) => clear(e, false),
+    onTouchStart: (e: React.TouchEvent) => start(e),
+    onTouchEnd: (e: React.TouchEvent) => clear(e),
   };
 };
 
-const isTouchEvent = (event: any) => {
+const isTouchEvent = (event: React.MouseEvent) => {
   return "touches" in event;
 };
 
